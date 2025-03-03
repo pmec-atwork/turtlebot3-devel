@@ -23,7 +23,7 @@ cd turtlebot3
 Construa a imagem do Docker:
 
 ```bash
-docker build -t turtlebot3 -f docker/Dockerfile .
+docker build -t turtlebot3-ros-humble -f docker/Dockerfile .
 ```
 
 ## Execução
