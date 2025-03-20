@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Verificar se um argumento foi passado
+if [ -z "$1" ]; then
+    echo "Uso: ./run.sh <nome_da_imagem>"
+    exit 1
+fi
+
+# Nome da imagem do Docker a partir do argumento
+IMAGE_NAME=$1
+
 # Armazenar o diretório raiz do projeto
 ROOT_DIR=$(pwd)
 
@@ -11,20 +20,13 @@ XAUTH=/tmp/.docker.xauth
 touch $XAUTH
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 
-# Nome da imagem do Docker
-IMAGE_NAME=turtlebot3-ros-humble
-
 # Definir o diretório de trabalho do container
-HOST_WORK_PATH="$(pwd)/ros_packages"
-
-# Definição do diretório de trabalho do container
+HOST_WORK_PATH="$ROOT_DIR/ros_packages"
 CONTAINER_WORK_PATH="/root/ros2_ws/src"
 
-# Definir o diretório de dador compartilhado entre o host e o container
+# Definir o diretório de dados compartilhado entre o host e o container
 HOST_DATA_PATH="$ROOT_DIR/shared_folder"
-
-# Definição do diretório de dados do container
-CONTAINER_DATA_PATH="/root/shared_folder"  # Changed to a more specific mount point
+CONTAINER_DATA_PATH="/root/shared_folder"
 
 # Rodar o container com as configurações necessárias
 docker run -it \
@@ -42,8 +44,7 @@ docker run -it \
   --volume="$HOST_DATA_PATH:$CONTAINER_DATA_PATH:rw" \
   $IMAGE_NAME
 
-# Configurações adicionais
-# Uncomment these lines if using an NVIDIA GPU
+# Configurações adicionais para NVIDIA GPU (descomente se necessário)
 #   --runtime nvidia \
 #   --gpus all \
 #   --env="NVIDIA_VISIBLE_DEVICES=all" \
